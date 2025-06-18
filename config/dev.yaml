@@ -1,0 +1,11 @@
+logging:
+  level: INFO
+  to_file: true
+  log_dir: ./logs
+  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"
+  rotate:
+    enabled: true
+    when: "midnight"     # "S", "M", "H", "D", "W0"-"W6", "midnight"
+    interval: 1
+    backupCount: 7       # 최근 7개만 보존
+    suffix: "%Y%m%d"   # 파일 이름 뒤에 붙는 날짜 포맷
