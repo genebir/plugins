@@ -1,98 +1,100 @@
-# Python ETL Framework
+# Python ETL 프레임워크
 
-A configurable ETL (Extract, Transform, Load) system with plugin architecture for data processing pipelines.
+데이터 처리 파이프라인을 위한 플러그인 아키텍처 기반의 구성 가능한 ETL (Extract, Transform, Load) 시스템입니다.
 
-## Features
+## 주요 기능
 
-- **Environment-based Configuration**: YAML-based settings with environment variable substitution
-- **Advanced Logging**: Configurable logging with console/file output and rotation support
-- **Plugin Architecture**: Modular design for extensible ETL components
-- **Environment Management**: Separate configurations for development and production
+- **환경 기반 구성**: 환경 변수 치환을 지원하는 YAML 기반 설정
+- **고급 로깅**: 콘솔/파일 출력 및 로테이션을 지원하는 구성 가능한 로깅
+- **플러그인 아키텍처**: 확장 가능한 ETL 컴포넌트를 위한 모듈식 설계
+- **환경 관리**: 개발 및 운영 환경을 위한 별도 구성
 
-## Project Structure
+## 프로젝트 구조
 
 ```
 ETL/
 ├── config/
-│   └── dev.yaml           # Development environment configuration
+│   └── dev.yaml           # 개발 환경 구성
 ├── plugins/
 │   ├── __init__.py
 │   ├── config/
 │   │   ├── __init__.py
-│   │   └── settings.py    # Configuration loader
+│   │   └── settings.py    # 구성 로더
 │   └── utils/
 │       ├── __init__.py
-│       └── logger.py      # Logging utilities
-├── test.py               # Test/demo script
+│       └── logger.py      # 로깅 유틸리티
+├── test.py               # 테스트/데모 스크립트
 └── .gitignore
 ```
 
-## Configuration
+## 설정
 
-### Environment Variables
-- `ENV`: Environment name (default: `dev`)
-
-### Logging Configuration (config/dev.yaml)
-```yaml
-logging:
-  level: INFO
-  to_file: true
-  log_dir: ./logs
-  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"
-  rotate:
-    enabled: true
-    when: "midnight"
-    interval: 1
-    backupCount: 7
-    suffix: "%Y%m%d"
+### 환경 변수 설정 (.env)
+```env
+ENV=dev  # 환경 이름 (기본값: dev)
 ```
 
-## Usage
+### YAML 설정 (config/dev.yaml)
+```yaml
+logging:
+  level: INFO              # 로그 레벨
+  to_file: true           # 파일 로깅 활성화
+  log_dir: ./logs         # 로그 디렉터리
+  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"  # 로그 형식
+  rotate:                 # 로그 로테이션 설정
+    enabled: true         # 로테이션 활성화
+    when: "midnight"      # 로테이션 시점
+    interval: 1           # 로테이션 간격
+    backupCount: 7        # 보관할 백업 파일 수
+    suffix: "%Y%m%d"      # 백업 파일 접미사
+```
 
-### Basic Setup
+## 사용법
+
+### 기본 설정
 ```python
 from plugins.utils.logger import setup_logger, get_logger
 
-# Initialize logging
+# 로깅 초기화
 setup_logger()
 
-# Get logger instance
+# 로거 인스턴스 가져오기
 logger = get_logger(__name__)
-logger.info('ETL process started')
+logger.info('ETL 프로세스 시작')
 ```
 
-### Configuration Loading
+### 구성 로딩
 ```python
 from plugins.config.settings import load_settings
 
-# Load environment-specific settings
+# 환경별 설정 로드
 settings = load_settings()
 ```
 
-## Getting Started
+## 시작하기
 
-1. **Install Dependencies**
+1. **의존성 설치**
    ```bash
    pip install python-dotenv pyyaml
    ```
 
-2. **Set Environment Variables**
+2. **환경 변수 설정**
    ```bash
    export ENV=dev
    ```
 
-3. **Run Test**
+3. **테스트 실행**
    ```bash
    python test.py
    ```
 
-## Development
+## 개발
 
-- Add new plugins to the `plugins/` directory
-- Create environment-specific configurations in `config/`
-- Use the logging system for consistent output formatting
-- Follow the plugin architecture for extensible components
+- `plugins/` 디렉터리에 새로운 플러그인 추가
+- `config/`에 환경별 구성 생성
+- 일관된 출력 형식을 위한 로깅 시스템 사용
+- 확장 가능한 컴포넌트를 위한 플러그인 아키텍처 준수
 
-## License
+## 라이선스
 
-This project is licensed under the MIT License.
+이 프로젝트는 MIT 라이선스 하에 배포됩니다.

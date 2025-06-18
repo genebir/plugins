@@ -130,6 +130,10 @@ output/
 *.parquet
 *.avro
 
+# Configuration files
+config/
+.env
+
 # IDE
 .vscode/
 .idea/
