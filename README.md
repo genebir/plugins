@@ -29,24 +29,46 @@ ETL/
 
 ## 설정
 
-### 환경 변수 설정 (.env)
+### 환경 변수 파일 (.env)
+프로젝트 루트에 `.env` 파일을 생성하여 환경 변수를 설정합니다.
+**주의: .env 파일은 Git에서 추적되지 않으므로 직접 생성해야 합니다.**
+
 ```env
-ENV=dev  # 환경 이름 (기본값: dev)
+ENV=dev  # 환경 이름 (dev, prod 등)
 ```
 
-### YAML 설정 (config/dev.yaml)
+### YAML 설정 파일 (config/)
+`config/` 디렉터리에 환경별 YAML 설정 파일을 생성합니다.
+**주의: config/ 디렉터리는 Git에서 추적되지 않으므로 직접 생성해야 합니다.**
+
+#### config/dev.yaml (개발 환경)
 ```yaml
 logging:
-  level: INFO              # 로그 레벨
-  to_file: true           # 파일 로깅 활성화
-  log_dir: ./logs         # 로그 디렉터리
-  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"  # 로그 형식
-  rotate:                 # 로그 로테이션 설정
-    enabled: true         # 로테이션 활성화
-    when: "midnight"      # 로테이션 시점
+  level: INFO              # 로그 레벨 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  to_file: true           # 파일 로깅 활성화 여부
+  log_dir: ./logs         # 로그 파일 저장 디렉터리
+  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"  # 로그 출력 형식
+  rotate:                 # 로그 파일 로테이션 설정
+    enabled: true         # 로테이션 활성화 여부
+    when: "midnight"      # 로테이션 시점 (S, M, H, D, W0-W6, midnight)
     interval: 1           # 로테이션 간격
-    backupCount: 7        # 보관할 백업 파일 수
-    suffix: "%Y%m%d"      # 백업 파일 접미사
+    backupCount: 7        # 보관할 백업 파일 개수
+    suffix: "%Y%m%d"      # 백업 파일명 접미사 (날짜 형식)
+```
+
+#### config/prod.yaml (운영 환경 예시)
+```yaml
+logging:
+  level: WARNING
+  to_file: true
+  log_dir: /var/log/etl
+  format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"
+  rotate:
+    enabled: true
+    when: "midnight"
+    interval: 1
+    backupCount: 30
+    suffix: "%Y%m%d"
 ```
 
 ## 사용법
@@ -78,13 +100,48 @@ settings = load_settings()
    pip install python-dotenv pyyaml
    ```
 
-2. **환경 변수 설정**
+2. **환경 설정 파일 생성**
+   
+   **a) .env 파일 생성**
    ```bash
-   export ENV=dev
+   # 프로젝트 루트에 .env 파일 생성
+   echo "ENV=dev" > .env
+   ```
+   
+   **b) config 디렉터리 및 YAML 파일 생성**
+   ```bash
+   # config 디렉터리 생성
+   mkdir -p config
+   
+   # 개발 환경 설정 파일 생성
+   cat > config/dev.yaml << EOF
+   logging:
+     level: INFO
+     to_file: true
+     log_dir: ./logs
+     format: "[%(asctime)s] %(name)s %(levelname)s: %(message)s"
+     rotate:
+       enabled: true
+       when: "midnight"
+       interval: 1
+       backupCount: 7
+       suffix: "%Y%m%d"
+   EOF
    ```
 
-3. **테스트 실행**
+3. **테스트 스크립트 생성 및 실행**
    ```bash
+   # 테스트 스크립트 생성
+   cat > test.py << EOF
+   from plugins.utils.logger import setup_logger, get_logger
+   
+   setup_logger()
+   
+   logger = get_logger(__name__)
+   logger.info('ETL 시스템 테스트')
+   EOF
+   
+   # 테스트 실행
    python test.py
    ```
 
